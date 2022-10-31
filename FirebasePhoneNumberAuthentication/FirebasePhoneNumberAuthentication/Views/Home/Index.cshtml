@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-auth-compat.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <style>
         .container {
             width: 302px;
@@ -19,7 +22,7 @@
         }
 
         #number, #verificationcode {
-            width: calc(100%);
+            width: calc(100% + 30px);
             padding: 10px;
             font-size: 20px;
             margin-bottom: 5px;
@@ -31,13 +34,13 @@
         }
 
         #send, #verify {
-            width: 100%;
+            width: calc(100% + 30px);
             height: 40px;
             outline: none;
         }
 
         .p-conf, .n-conf {
-            width: calc(100%-22px);
+            width: calc(100% + 30px);
             border: 2px solid green;
             border-radius: 4px;
             padding: 8px 10px;
@@ -105,12 +108,32 @@
         // function for OTP verify
         function codeverify() {
             var code = document.getElementById('verificationcode').value;
+            var number = document.getElementById('number').value;
             coderesult.confirm(code).then(function () {
+                executeVerified(number,"true");
                 document.getElementsByClassName('p-conf')[0].style.display = 'block';
                 document.getElementsByClassName('n-conf')[0].style.display = 'none';
             }).catch(function () {
+                executeVerified(number, "false");
                 document.getElementsByClassName('p-conf')[0].style.display = 'none';
                 document.getElementsByClassName('n-conf')[0].style.display = 'block';
+            })
+        }
+
+        function executeVerified(number,status)
+        {
+            $.ajax({
+                type: "POST",
+                traditional: true,
+                data:
+                {
+                    "statusStr": JSON.stringify(status),
+                    "number": JSON.stringify(number),
+                },
+                url: "@Url.Action("ExecuteVerified", "Home")",
+                success: function (data)
+                {
+                },
             })
         }
     </script>

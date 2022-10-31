@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
 
 namespace FirebasePhoneNumberAuthentication.Controllers
 {
@@ -25,6 +26,20 @@ namespace FirebasePhoneNumberAuthentication.Controllers
             ViewBag.Message = "Your contact page.";
 
             return View();
+        }
+        [HttpPost]
+        public ActionResult ExecuteVerified(string number,string statusStr)
+        {
+            try
+            {
+                number = new JavaScriptSerializer().Deserialize<string>(number);
+                bool status = new JavaScriptSerializer().Deserialize<bool>(statusStr);
+            }
+            catch (Exception ex)
+            {
+                
+            }
+            return default;
         }
     }
 }
