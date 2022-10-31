@@ -1,4 +1,6 @@
-﻿using System;
+﻿using FirebasePhoneNumberAuthentication.MemCached;
+using FirebasePhoneNumberAuthentication.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -34,6 +36,14 @@ namespace FirebasePhoneNumberAuthentication.Controllers
             {
                 number = new JavaScriptSerializer().Deserialize<string>(number);
                 bool status = new JavaScriptSerializer().Deserialize<bool>(statusStr);
+                if(status)
+                {
+                    User user = new User();
+                    {
+                        user.Phone = number;
+                    }
+                    Authenticator.SetAuth(user, HttpContext);
+                }    
             }
             catch (Exception ex)
             {
