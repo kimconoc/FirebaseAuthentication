@@ -1,12 +1,11 @@
-﻿using FirebasePhoneNumberAuthenticationCore.MemCached;
-using FirebasePhoneNumberAuthenticationCore.Models;
+﻿using FirebasePhoneNumberAuthenticationCore.Models;
 using Microsoft.AspNetCore.Mvc;
 using Nancy.Json;
 using System.Diagnostics;
 
 namespace FirebasePhoneNumberAuthenticationCore.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         private readonly ILogger<HomeController> _logger;
 
@@ -17,8 +16,15 @@ namespace FirebasePhoneNumberAuthenticationCore.Controllers
 
         public IActionResult Index()
         {
-            var user = Authenticator.CurrentUser(Request);
-            return View();
+            //Test Remote Cookie
+            //RemoteCurrentUserCookie()
+            ViewBag.YourPhone = string.Empty;
+            var user = GetCurrentUser();
+            if(user != null)
+            {
+                ViewBag.YourPhone = user.Phone;
+            }
+            return View("Index");
         }
 
         public IActionResult Privacy()
@@ -41,18 +47,20 @@ namespace FirebasePhoneNumberAuthenticationCore.Controllers
                 bool status = new JavaScriptSerializer().Deserialize<bool>(statusStr);
                 if (status)
                 {
-                    User user = new User();
+                    UserBaseModel userBaseModel = new UserBaseModel();
                     {
-                        user.Phone = number;
+                        userBaseModel.Phone = number;
                     }
-                    Authenticator.SetAuth(Response,user);
+                    var user = GetCurrentUser();
+                    if(user == null)
+                        SetCurrentUserCookie(userBaseModel);
                 }
             }
             catch (Exception ex)
             {
 
             }
-            return default;
+            return View("Index");
         }
     }
 }
