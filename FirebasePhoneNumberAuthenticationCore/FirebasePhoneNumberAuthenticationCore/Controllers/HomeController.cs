@@ -1,4 +1,5 @@
-﻿using FirebasePhoneNumberAuthenticationCore.Models;
+﻿using FirebasePhoneNumberAuthenticationCore.MemCached;
+using FirebasePhoneNumberAuthenticationCore.Models;
 using Microsoft.AspNetCore.Mvc;
 using Nancy.Json;
 using System.Diagnostics;
@@ -16,6 +17,7 @@ namespace FirebasePhoneNumberAuthenticationCore.Controllers
 
         public IActionResult Index()
         {
+            var user = Authenticator.CurrentUser(Request);
             return View();
         }
 
@@ -39,11 +41,11 @@ namespace FirebasePhoneNumberAuthenticationCore.Controllers
                 bool status = new JavaScriptSerializer().Deserialize<bool>(statusStr);
                 if (status)
                 {
-                    //User user = new User();
-                    //{
-                    //    user.Phone = number;
-                    //}
-                    //Authenticator.SetAuth(user, HttpContext);
+                    User user = new User();
+                    {
+                        user.Phone = number;
+                    }
+                    Authenticator.SetAuth(Response,user);
                 }
             }
             catch (Exception ex)
